@@ -70,7 +70,7 @@
             const data = JSON.parse(content);
             inizializzaPagina(data);
           } catch (err) {
-            alert('Errore nel parsing del file JSON.');
+            alert('Errore nel parsing del file JSON: ' + err.message);
           }
         };
         reader.readAsText(file);
