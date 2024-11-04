@@ -9,7 +9,7 @@
       font-family: 'Times New Roman', serif;
       margin: 0;
       padding: 0;
-      background-color: #fdfcf8;
+      background-color: #ffffff; /* Sfondo bianco */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -61,6 +61,10 @@
       max-width: 800px;
       text-align: justify;
       color: #333;
+      background-color: #f9f9f9; /* Colore più chiaro per il quaderno */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     /* Stile per lo slider della timeline */
@@ -109,11 +113,12 @@
       max-width: 800px;
       margin: 20px 20px 60px 20px;
       padding: 20px;
-      background-color: #ecf0f1;
+      background-color: #f9f9f9; /* Colore più chiaro per il quaderno */
       border-radius: 10px;
       color: #333;
       font-size: 1.1em;
       line-height: 1.6;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     #dettagli h2 {
@@ -138,12 +143,8 @@
       padding: 20px;
     }
 
-    /* Stile per la linea laterale del diario */
-    .notebook {
-      position: relative;
-    }
-
-    .notebook:before {
+    /* Rimuovere la linea verticale */
+    /* .notebook:before {
       content: '';
       position: absolute;
       top: 0;
@@ -152,23 +153,34 @@
       width: 2px;
       background: linear-gradient(to bottom, #bbb 50%, transparent 50%);
       background-size: 2px 20px;
-    }
+    } */
 
-    /* Stile per linee orizzontali */
-    .notebook .lined-paper {
+    /* Stile per linee orizzontali (opzionale) */
+    .lined-paper {
       position: relative;
+      background-color: #fdfdfd;
     }
 
-    .notebook .lined-paper:before {
+    .lined-paper:before {
       content: '';
       position: absolute;
       top: 20px;
       left: 0;
       right: 0;
       height: calc(100% - 40px);
-      background-image: linear-gradient(to bottom, transparent 19px, rgba(0,0,0,0.05) 20px);
+      background-image: linear-gradient(to bottom, transparent 19px, rgba(0,0,0,0.03) 20px);
       background-size: 100% 20px;
       pointer-events: none;
+    }
+
+    /* Stile per testo evidenziato */
+    .highlight {
+      background-color: yellow;
+    }
+
+    /* Stile per testo sottolineato */
+    .underline {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -183,7 +195,7 @@
   </div>
 
   <!-- Contenitore principale -->
-  <div class="container notebook">
+  <div class="container">
     <!-- Sezione per la prefazione -->
     <div id="prefazione" class="lined-paper"></div>
 
@@ -230,7 +242,7 @@
 
       // Imposta la prefazione
       const prefazioneDiv = document.getElementById('prefazione');
-      prefazioneDiv.textContent = data.prefazione;
+      prefazioneDiv.innerHTML = parseText(data.prefazione);
 
       // Configura lo slider
       const annoNascita = data.annoNascita;
@@ -271,10 +283,10 @@
           titoloMemoria.textContent = 'Ricordo ' + (index + 1);
 
           const memorieP = document.createElement('p');
-          memorieP.textContent = record.memorie;
+          memorieP.innerHTML = parseText(record.memorie);
 
           const riferimentoP = document.createElement('p');
-          riferimentoP.innerHTML = '<strong>Riferimento storico:</strong> ' + record.riferimento;
+          riferimentoP.innerHTML = '<strong>Riferimento storico:</strong> ' + parseText(record.riferimento);
 
           dettagliDiv.appendChild(titoloMemoria);
           dettagliDiv.appendChild(memorieP);
@@ -285,6 +297,15 @@
         nessunDatoP.textContent = 'Nessun ricordo disponibile per questo anno.';
         dettagliDiv.appendChild(nessunDatoP);
       }
+    }
+
+    // Funzione per interpretare il testo con formattazione personalizzata
+    function parseText(text) {
+      // Sostituisce [u]testo[/u] con testo sottolineato
+      text = text.replace(/\[u\](.*?)\[\/u\]/g, '<span class="underline">$1</span>');
+      // Sostituisce [h]testo[/h] con testo evidenziato
+      text = text.replace(/\[h\](.*?)\[\/h\]/g, '<span class="highlight">$1</span>');
+      return text;
     }
   </script>
 </body>
