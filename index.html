@@ -2,65 +2,190 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Linea del Tempo Interattiva</title>
+  <title>Diario Interattivo</title>
   <style>
+    /* Stili generali */
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
+      font-family: 'Georgia', serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fafafa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    #prefazione {
+    h1 {
+      margin-top: 50px;
+      font-size: 2.5em;
+      color: #333;
+    }
+
+    /* Stile per il pulsante di caricamento del file */
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
       margin-top: 20px;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: #6c5ce7;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: #5a4bcf;
+    }
+
+    /* Stile per la prefazione */
+    #prefazione {
+      margin: 40px 20px;
       font-size: 1.2em;
+      line-height: 1.6;
+      max-width: 800px;
+      text-align: center;
+      color: #555;
+    }
+
+    /* Stile per la linea del tempo */
+    #timeline-container {
+      position: relative;
+      width: 90%;
+      max-width: 800px;
+      margin: 40px 0;
+      overflow-x: scroll;
+      overflow-y: hidden;
     }
 
     #timeline {
-      margin-top: 30px;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .timeline-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background-color: #ddd;
+      transform: translateY(-50%);
     }
 
     .year {
-      display: inline-block;
-      margin: 5px;
-      padding: 10px;
-      background-color: #e0e0e0;
+      position: relative;
+      flex: 0 0 auto;
+      width: 60px;
+      text-align: center;
+      margin: 0 10px;
       cursor: pointer;
     }
 
-    .year:hover {
-      background-color: #c0c0c0;
+    .year-circle {
+      width: 20px;
+      height: 20px;
+      background-color: #6c5ce7;
+      border-radius: 50%;
+      margin: 0 auto 10px auto;
+      transition: background-color 0.3s;
     }
 
-    .selected {
-      background-color: #a0a0a0;
+    .year:hover .year-circle {
+      background-color: #5a4bcf;
     }
 
+    .year.selected .year-circle {
+      background-color: #ff7675;
+    }
+
+    .year-label {
+      font-size: 14px;
+      color: #333;
+    }
+
+    /* Stile per i dettagli */
     #dettagli {
-      margin-top: 30px;
-      border-top: 1px solid #ccc;
-      padding-top: 20px;
+      max-width: 800px;
+      margin: 20px 20px 60px 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    #dettagli h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    #dettagli p {
+      color: #555;
+      line-height: 1.6;
+    }
+
+    /* Stile per effetti di transizione */
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1>Linea del Tempo Interattiva</h1>
+  <h1>Il Mio Diario Interattivo</h1>
 
-  <!-- Input per caricare il file JSON -->
-  <input type="file" id="fileInput" accept=".json">
+  <!-- Pulsante per caricare il file JSON -->
+  <div class="file-input-wrapper">
+    <button class="btn">Carica il Tuo Diario</button>
+    <input type="file" id="fileInput" accept=".json">
+  </div>
 
   <!-- Sezione per la prefazione -->
   <div id="prefazione"></div>
 
-  <!-- Sezione per la linea del tempo -->
-  <div id="timeline"></div>
+  <!-- Contenitore per la linea del tempo -->
+  <div id="timeline-container">
+    <div id="timeline">
+      <div class="timeline-line"></div>
+      <!-- Gli anni verranno inseriti dinamicamente qui -->
+    </div>
+  </div>
 
   <!-- Sezione per mostrare i dettagli delle memorie -->
   <div id="dettagli"></div>
 
   <!-- JavaScript -->
   <script>
+    // Migliora il pulsante di caricamento del file
+    const fileInput = document.getElementById('fileInput');
+    const btn = document.querySelector('.file-input-wrapper .btn');
+    btn.addEventListener('click', () => fileInput.click());
+
     // Gestisce il caricamento del file JSON
-    document.getElementById('fileInput').addEventListener('change', function(event) {
+    fileInput.addEventListener('change', function(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
@@ -70,7 +195,7 @@
             const data = JSON.parse(content);
             inizializzaPagina(data);
           } catch (err) {
-            alert('Errore nel parsing del file JSON: ' + err.message);
+            alert('Errore nel parsing del file JSON.');
           }
         };
         reader.readAsText(file);
@@ -79,24 +204,44 @@
 
     function inizializzaPagina(data) {
       // Imposta la prefazione
-      document.getElementById('prefazione').textContent = data.prefazione;
+      const prefazioneDiv = document.getElementById('prefazione');
+      prefazioneDiv.textContent = data.prefazione;
+      prefazioneDiv.classList.add('fade-in');
 
       // Crea la linea del tempo
       const timelineDiv = document.getElementById('timeline');
       timelineDiv.innerHTML = ''; // Svuota il contenuto
+      const timelineLine = document.createElement('div');
+      timelineLine.className = 'timeline-line';
+      timelineDiv.appendChild(timelineLine);
+
       const annoCorrente = new Date().getFullYear();
 
       for (let anno = data.annoNascita; anno <= annoCorrente; anno++) {
         const yearDiv = document.createElement('div');
         yearDiv.className = 'year';
-        yearDiv.textContent = anno;
         yearDiv.dataset.anno = anno;
+
+        const yearCircle = document.createElement('div');
+        yearCircle.className = 'year-circle';
+
+        const yearLabel = document.createElement('div');
+        yearLabel.className = 'year-label';
+        yearLabel.textContent = anno;
+
+        yearDiv.appendChild(yearCircle);
+        yearDiv.appendChild(yearLabel);
+
         yearDiv.addEventListener('click', function() {
           mostraDettagliAnno(anno, data.ricordi);
           evidenziaAnnoSelezionato(this);
         });
         timelineDiv.appendChild(yearDiv);
       }
+
+      // Rimuove eventuali dettagli precedenti
+      const dettagliDiv = document.getElementById('dettagli');
+      dettagliDiv.innerHTML = '';
     }
 
     function mostraDettagliAnno(anno, ricordi) {
@@ -105,15 +250,24 @@
 
       const record = ricordi.find(r => r.anno === anno);
       if (record) {
+        const titolo = document.createElement('h2');
+        titolo.textContent = 'Anno ' + anno;
         const memorieP = document.createElement('p');
-        memorieP.textContent = 'Memorie: ' + record.memorie;
+        memorieP.textContent = record.memorie;
         const riferimentoP = document.createElement('p');
-        riferimentoP.textContent = 'Riferimento: ' + record.riferimento;
+        riferimentoP.textContent = 'Riferimento storico: ' + record.riferimento;
+        dettagliDiv.appendChild(titolo);
         dettagliDiv.appendChild(memorieP);
         dettagliDiv.appendChild(riferimentoP);
       } else {
-        dettagliDiv.textContent = 'Nessun dato disponibile per questo anno.';
+        const titolo = document.createElement('h2');
+        titolo.textContent = 'Anno ' + anno;
+        const nessunDatoP = document.createElement('p');
+        nessunDatoP.textContent = 'Nessun ricordo disponibile per questo anno.';
+        dettagliDiv.appendChild(titolo);
+        dettagliDiv.appendChild(nessunDatoP);
       }
+      dettagliDiv.classList.add('fade-in');
     }
 
     function evidenziaAnnoSelezionato(elementoSelezionato) {
