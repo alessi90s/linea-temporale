@@ -1,0 +1,22 @@
+{
+  "prefazione": "Sono nato in un piccolo paese di campagna...",
+  "annoNascita": 1980,
+  "ricordi": [
+    {
+      "anno": 1980,
+      "memorie": "La mia nascita è avvenuta in un giorno di primavera...",
+      "riferimento": "Eruzione del Monte St. Helens."
+    },
+    {
+      "anno": 1995,
+      "memorie": "Ho iniziato le scuole superiori...",
+      "riferimento": "Windows 95 viene rilasciato."
+    },
+    {
+      "anno": 2000,
+      "memorie": "Ho iniziato l'università...",
+      "riferimento": "Il Millennium Bug non ha causato problemi significativi."
+    }
+    // Aggiungi altri anni e ricordi qui
+  ]
+}
