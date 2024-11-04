@@ -9,7 +9,9 @@
       font-family: 'Times New Roman', serif;
       margin: 0;
       padding: 0;
-      background-color: #ffffff; /* Sfondo bianco */
+      background-image: url('https://i.imgur.com/Gfzsld4.png'); /* Immagine di sfondo a quadretti */
+      background-size: cover;
+      background-repeat: repeat;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -47,30 +49,88 @@
       border-radius: 5px;
       text-decoration: none;
       border: none;
+      position: relative;
     }
 
     .btn:hover {
       background-color: #34495e;
     }
 
-    /* Stile per la prefazione */
-    #prefazione {
-      margin: 40px 20px;
-      font-size: 1.2em;
-      line-height: 1.6;
-      max-width: 800px;
-      text-align: justify;
+    /* Tooltip */
+    .btn .tooltip {
+      visibility: hidden;
+      width: 300px;
+      background-color: #f9f9f9;
       color: #333;
-      background-color: #f9f9f9; /* Colore più chiaro per il quaderno */
+      text-align: left;
+      border-radius: 6px;
+      padding: 10px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -150px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .btn .tooltip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #f9f9f9 transparent transparent transparent;
+    }
+
+    .btn:hover .tooltip {
+      visibility: visible;
+    }
+
+    /* Nascondi contenuto prima del caricamento */
+    #content {
+      display: none;
+    }
+
+    /* Stile per i contenitori */
+    .container {
+      width: 90%;
+      max-width: 800px;
+      margin: 20px auto;
+      background-color: #ffffff;
       padding: 20px;
       border-radius: 10px;
+      position: relative;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background-image: linear-gradient(to bottom, transparent 95%, rgba(0,0,0,0.05) 96%);
+      background-size: 100% 24px;
+    }
+
+    /* Linee orizzontali per il quaderno a righe */
+    .container:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-image: linear-gradient(to bottom, transparent 23px, rgba(0,0,0,0.05) 24px);
+      background-size: 100% 24px;
+      pointer-events: none;
+    }
+
+    /* Stile per la prefazione */
+    #prefazione {
+      font-size: 1.2em;
+      line-height: 1.6;
+      text-align: justify;
+      color: #333;
     }
 
     /* Stile per lo slider della timeline */
     #timeline-container {
-      width: 80%;
-      max-width: 800px;
+      width: 100%;
       margin: 40px 0;
     }
 
@@ -110,15 +170,9 @@
 
     /* Stile per i dettagli */
     #dettagli {
-      max-width: 800px;
-      margin: 20px 20px 60px 20px;
-      padding: 20px;
-      background-color: #f9f9f9; /* Colore più chiaro per il quaderno */
-      border-radius: 10px;
-      color: #333;
       font-size: 1.1em;
       line-height: 1.6;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      color: #333;
     }
 
     #dettagli h2 {
@@ -134,43 +188,6 @@
 
     #dettagli p {
       color: #555;
-    }
-
-    /* Stile per il contenitore principale */
-    .container {
-      width: 100%;
-      max-width: 1000px;
-      padding: 20px;
-    }
-
-    /* Rimuovere la linea verticale */
-    /* .notebook:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50px;
-      width: 2px;
-      background: linear-gradient(to bottom, #bbb 50%, transparent 50%);
-      background-size: 2px 20px;
-    } */
-
-    /* Stile per linee orizzontali (opzionale) */
-    .lined-paper {
-      position: relative;
-      background-color: #fdfdfd;
-    }
-
-    .lined-paper:before {
-      content: '';
-      position: absolute;
-      top: 20px;
-      left: 0;
-      right: 0;
-      height: calc(100% - 40px);
-      background-image: linear-gradient(to bottom, transparent 19px, rgba(0,0,0,0.03) 20px);
-      background-size: 100% 20px;
-      pointer-events: none;
     }
 
     /* Stile per testo evidenziato */
@@ -190,23 +207,43 @@
 
   <!-- Pulsante per caricare il file JSON -->
   <div class="file-input-wrapper">
-    <button class="btn">Carica il Tuo Diario</button>
+    <button class="btn">Carica il Tuo Diario
+      <div class="tooltip">
+        <strong>Come creare il file JSON:</strong>
+        <ul>
+          <li>Il file deve essere in formato JSON.</li>
+          <li>Deve contenere una <code>prefazione</code> (testo introduttivo).</li>
+          <li>Deve indicare l'<code>annoNascita</code> (anno di inizio).</li>
+          <li>Deve avere un array di <code>ricordi</code>, ciascuno con:
+            <ul>
+              <li><code>anno</code>: l'anno del ricordo.</li>
+              <li><code>memorie</code>: il testo del ricordo (supporta [u]sottolineato[/u] e [h]evidenziato[/h]).</li>
+              <li><code>riferimento</code>: un riferimento storico.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </button>
     <input type="file" id="fileInput" accept=".json">
   </div>
 
-  <!-- Contenitore principale -->
-  <div class="container">
-    <!-- Sezione per la prefazione -->
-    <div id="prefazione" class="lined-paper"></div>
+  <!-- Contenitore principale, nascosto prima del caricamento -->
+  <div id="content">
+    <!-- Prefazione -->
+    <div class="container">
+      <div id="prefazione"></div>
+    </div>
 
-    <!-- Contenitore per la timeline slider -->
-    <div id="timeline-container">
+    <!-- Timeline -->
+    <div class="container" id="timeline-container">
       <div id="year-display"></div>
       <input type="range" id="slider" min="0" max="0" value="0">
     </div>
 
-    <!-- Sezione per mostrare i dettagli delle memorie -->
-    <div id="dettagli" class="lined-paper"></div>
+    <!-- Dettagli dei ricordi -->
+    <div class="container">
+      <div id="dettagli"></div>
+    </div>
   </div>
 
   <!-- JavaScript -->
@@ -229,6 +266,9 @@
           try {
             const data = JSON.parse(content);
             inizializzaPagina(data);
+            // Nascondi il pulsante di caricamento e mostra il contenuto
+            document.querySelector('.file-input-wrapper').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
           } catch (err) {
             alert('Errore nel parsing del file JSON.');
           }
@@ -251,12 +291,6 @@
       slider.min = annoNascita;
       slider.max = annoCorrente;
       slider.value = annoNascita;
-
-      // Crea un array degli anni disponibili
-      anniDisponibili = [];
-      for (let anno = annoNascita; anno <= annoCorrente; anno++) {
-        anniDisponibili.push(anno);
-      }
 
       // Mostra il primo anno
       mostraDettagliAnno(annoNascita);
