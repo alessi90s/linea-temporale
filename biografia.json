@@ -1,21 +1,16 @@
 {
-  "prefazione": "Sono nato in un piccolo paese di campagna...",
-  "annoNascita": 1980,
+  "prefazione": "Sono nato in una città meravigliosa.",
+  "annoNascita": 1990,
   "ricordi": [
     {
-      "anno": 1980,
-      "memorie": "La mia nascita è avvenuta in un giorno di primavera...",
-      "riferimento": "Eruzione del Monte St. Helens."
-    },
-    {
-      "anno": 1995,
-      "memorie": "Ho iniziato le scuole superiori...",
-      "riferimento": "Windows 95 viene rilasciato."
+      "anno": 1990,
+      "memorie": "Il mio primo giorno nel mondo.",
+      "riferimento": "La caduta del Muro di Berlino è avvenuta l'anno precedente."
     },
     {
       "anno": 2000,
-      "memorie": "Ho iniziato l'università...",
-      "riferimento": "Il Millennium Bug non ha causato problemi significativi."
+      "memorie": "Inizio del nuovo millennio.",
+      "riferimento": "Le preoccupazioni per il Millennium Bug si sono rivelate infondate."
     }
   ]
 }
