@@ -19,11 +19,21 @@
       align-items: center;
     }
 
+    /* Contenitore principale centrato */
+    .main-container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     /* Titolo principale */
     h1 {
       margin-top: 50px;
       font-size: 2.5em;
       color: #333;
+      text-align: center;
     }
 
     /* Sottotitolo */
@@ -33,6 +43,7 @@
       font-style: italic;
       margin-top: -10px;
       margin-bottom: 30px;
+      text-align: center;
     }
 
     /* Nascondi il titolo e il sottotitolo dopo il caricamento */
@@ -107,75 +118,53 @@
       display: none;
     }
 
-    /* Stile per la prefazione e dettagli come quaderni a righe */
-    .lined-paper {
-      position: relative;
-      background-color: #f9f9f9; /* Sfondo leggermente più chiaro */
+    /* Stile per la prefazione */
+    #prefazione {
+      background-color: #f9f9f9;
       padding: 20px;
       margin: 20px;
       border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Ombreggiatura sottile */
-      max-width: 800px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       width: 100%;
-    }
-
-    .lined-paper:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: linear-gradient(to bottom, transparent 23px, rgba(0,0,0,0.03) 24px);
-      background-size: 100% 24px;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .lined-paper-content {
-      position: relative;
-      z-index: 2;
     }
 
     /* Stile per lo slider della timeline */
     #timeline-container {
-      width: 80%;
-      max-width: 800px;
-      margin: 20px 0 10px 0; /* Ridotto lo spazio verticale */
+      width: 100%;
+      margin: 20px 0 10px 0;
+      text-align: center;
     }
 
     #year-display {
       font-size: 2em;
       color: #2c3e50;
       margin-bottom: 5px;
-      text-align: center;
     }
 
     #age-display {
       font-size: 1.2em;
       color: #555;
       margin-bottom: 20px;
-      text-align: center;
     }
 
     #slider {
       -webkit-appearance: none;
       width: 100%;
-      height: 6px; /* Ridotto lo spessore della linea temporale */
+      height: 6px;
       border-radius: 5px;
-      background: #7f8c8d; /* Colore abbinato ai pulsanti */
+      background: #7f8c8d;
       outline: none;
     }
 
     #slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 16px; /* Ridotte le dimensioni del pallino */
+      width: 16px;
       height: 16px;
       border-radius: 50%;
       background: #2c3e50;
       cursor: pointer;
-      box-shadow: 0 0 2px rgba(0,0,0,0.5); /* Aggiunta ombra */
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
     }
 
     #slider::-moz-range-thumb {
@@ -184,7 +173,7 @@
       border-radius: 50%;
       background: #2c3e50;
       cursor: pointer;
-      box-shadow: 0 0 2px rgba(0,0,0,0.5); /* Aggiunta ombra */
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
     }
 
     /* Stile per le categorie */
@@ -192,18 +181,16 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      margin: 10px 20px 20px 20px; /* Ridotto lo spazio verticale */
-      max-width: 800px;
-      border-bottom: 1px solid #ddd; /* Separazione visiva */
-      padding-bottom: 10px;
+      margin: 10px 0 20px 0;
+      width: 100%;
     }
 
     .category {
-      background-color: #9b59b6; /* Colore meno saturo */
+      background-color: #9b59b6;
       color: #fff;
       padding: 6px 12px;
       margin: 5px;
-      border-radius: 20px; /* Arrotondamento dei bordi */
+      border-radius: 20px;
       cursor: pointer;
       user-select: none;
       font-size: 0.9em;
@@ -217,28 +204,14 @@
       background-color: #7d3c98;
     }
 
-    /* Stile per l'indice degli anni */
-    #year-index {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin: 20px 20px 10px 20px; /* Ridotto lo spazio verticale */
-      max-width: 800px;
-    }
-
-    .year-item {
-      background-color: #3498db; /* Colori uniformati */
-      color: #fff;
-      padding: 6px 12px;
-      margin: 5px;
-      border-radius: 20px; /* Arrotondamento dei bordi */
-      cursor: pointer;
-      user-select: none;
-      font-size: 0.9em;
-    }
-
-    .year-item:hover {
-      background-color: #2980b9;
+    /* Stile per la sezione dei ricordi */
+    #dettagli {
+      background-color: #f9f9f9;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
     }
 
     /* Stile per testo evidenziato */
@@ -254,37 +227,44 @@
 </head>
 <body>
 
-  <!-- Titolo principale e sottotitolo -->
-  <div class="header">
-    <h1>Il Mio Diario Interattivo</h1>
-    <h2>Carica il tuo diario in formato JSON per iniziare</h2>
-  </div>
+  <!-- Contenitore principale -->
+  <div class="main-container">
 
-  <!-- Pulsante per caricare il file JSON con tooltip -->
-  <div class="file-input-wrapper">
-    <button class="btn" data-tooltip="Il file JSON deve avere la struttura:\n{\n  \"prefazione\": \"Testo\",\n  \"annoNascita\": 1990,\n  \"anni\": [...],\n  \"ricordi\": [...]\n}">Carica il Tuo Diario</button>
-    <input type="file" id="fileInput" accept=".json">
-  </div>
-
-  <!-- Contenitore principale nascosto inizialmente -->
-  <div class="container">
-    <!-- Indice degli anni -->
-    <div id="year-index"></div>
-
-    <!-- Elenco delle categorie -->
-    <div id="categories"></div>
-
-    <!-- Contenitore per la timeline slider -->
-    <div id="timeline-container">
-      <div id="year-display"></div>
-      <div id="age-display"></div>
-      <input type="range" id="slider" min="0" max="0" value="0">
+    <!-- Titolo principale e sottotitolo -->
+    <div class="header">
+      <h1>Il Mio Diario Interattivo</h1>
+      <h2>Carica il tuo diario in formato JSON per iniziare</h2>
     </div>
 
-    <!-- Sezione per mostrare i dettagli delle memorie -->
-    <div id="dettagli" class="lined-paper">
-      <div class="lined-paper-content"></div>
+    <!-- Pulsante per caricare il file JSON con tooltip -->
+    <div class="file-input-wrapper">
+      <button class="btn" data-tooltip="Il file JSON deve avere la struttura:\n{\n  \"prefazione\": \"Testo\",\n  \"annoNascita\": 1990,\n  \"anni\": [...],\n  \"ricordi\": [...]\n}">Carica il Tuo Diario</button>
+      <input type="file" id="fileInput" accept=".json">
     </div>
+
+    <!-- Contenitore principale nascosto inizialmente -->
+    <div class="container">
+
+      <!-- Prefazione -->
+      <div id="prefazione"></div>
+
+      <!-- Elenco delle categorie -->
+      <div id="categories"></div>
+
+      <!-- Contenitore per la timeline slider -->
+      <div id="timeline-container">
+        <div id="year-display"></div>
+        <div id="age-display"></div>
+        <input type="range" id="slider" min="0" max="0" value="0">
+      </div>
+
+      <!-- Sezione per mostrare i dettagli delle memorie -->
+      <div id="dettagli">
+        <div id="dettagli-content"></div>
+      </div>
+
+    </div>
+
   </div>
 
   <!-- JavaScript -->
@@ -324,9 +304,9 @@
     function inizializzaPagina(data) {
       dataGlobal = data;
 
-      // Imposta la prefazione come titolo principale
-      const yearDisplay = document.getElementById('year-display');
-      yearDisplay.textContent = parseText(data.prefazione);
+      // Imposta la prefazione in alto
+      const prefazioneDiv = document.getElementById('prefazione');
+      prefazioneDiv.innerHTML = parseText(data.prefazione);
 
       // Crea l'indice degli anni
       creaIndiceAnni(data.anni);
@@ -356,40 +336,24 @@
     }
 
     function creaIndiceAnni(anni) {
-      const yearIndexDiv = document.getElementById('year-index');
       anni.forEach(annoObj => {
         indiceAnni[annoObj.anno] = annoObj.particolarita;
-        const yearSpan = document.createElement('span');
-        yearSpan.className = 'year-item';
-        yearSpan.textContent = annoObj.anno;
-        yearSpan.title = annoObj.particolarita;
-        yearSpan.addEventListener('click', function() {
-          if (categoriaSelezionata) {
-            deselezionaCategoria();
-          }
-          const slider = document.getElementById('slider');
-          slider.value = annoObj.anno;
-          mostraDettagliAnno(annoObj.anno);
-        });
-        yearIndexDiv.appendChild(yearSpan);
       });
     }
 
     function mostraDettagliAnno(anno) {
       // Aggiorna la visualizzazione dell'anno
       const yearDisplay = document.getElementById('year-display');
-      yearDisplay.innerHTML = 'Anno ' + anno;
-
-      // Mostra la particolarità dell'anno se presente
+      // Mostra la particolarità dell'anno accanto all'anno nella linea temporale
       const particolarita = indiceAnni[anno] ? ' - ' + parseText(indiceAnni[anno]) : '';
-      yearDisplay.innerHTML += particolarita;
+      yearDisplay.innerHTML = 'Anno ' + anno + particolarita;
 
       // Calcola l'età
       const eta = calcolaEta(anno);
       const ageDisplay = document.getElementById('age-display');
       ageDisplay.textContent = 'Età: ' + eta;
 
-      const dettagliDiv = document.querySelector('#dettagli .lined-paper-content');
+      const dettagliDiv = document.getElementById('dettagli-content');
       dettagliDiv.innerHTML = ''; // Svuota il contenuto
 
       const records = dataGlobal.ricordi.filter(r => r.anno == anno);
@@ -459,7 +423,7 @@
       document.querySelectorAll('.category').forEach(el => el.classList.remove('selected'));
       elemento.classList.add('selected');
 
-      const dettagliDiv = document.querySelector('#dettagli .lined-paper-content');
+      const dettagliDiv = document.getElementById('dettagli-content');
       dettagliDiv.innerHTML = ''; // Svuota il contenuto
 
       const records = dataGlobal.ricordi.filter(r => r.categorie.includes(categoria));
