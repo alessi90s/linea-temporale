@@ -2,14 +2,15 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Diario Interattivo</title>
+  <title>Il Mio Diario Interattivo</title>
   <style>
     /* Stili generali */
     body {
-      font-family: 'Georgia', serif;
+      font-family: 'Caveat', cursive;
       margin: 0;
       padding: 0;
-      background-color: #fafafa;
+      background-image: url('https://i.imgur.com/oHgHi.png'); /* Immagine di sfondo tipo carta */
+      background-size: cover;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -17,8 +18,9 @@
 
     h1 {
       margin-top: 50px;
-      font-size: 2.5em;
+      font-size: 3em;
       color: #333;
+      text-shadow: 1px 1px 2px #fff;
     }
 
     /* Stile per il pulsante di caricamento del file */
@@ -39,84 +41,82 @@
 
     .btn {
       display: inline-block;
-      background-color: #6c5ce7;
+      background-color: #e67e22;
       color: white;
       padding: 12px 24px;
       font-size: 16px;
       cursor: pointer;
       border-radius: 5px;
       text-decoration: none;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
     }
 
     .btn:hover {
-      background-color: #5a4bcf;
+      background-color: #d35400;
     }
 
     /* Stile per la prefazione */
     #prefazione {
       margin: 40px 20px;
-      font-size: 1.2em;
+      font-size: 1.5em;
       line-height: 1.6;
       max-width: 800px;
       text-align: center;
-      color: #555;
+      color: #333;
+      background-color: rgba(255,255,255,0.8);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
-    /* Stile per la linea del tempo */
+    /* Stile per lo slider della timeline */
     #timeline-container {
-      position: relative;
-      width: 90%;
+      width: 80%;
       max-width: 800px;
       margin: 40px 0;
-      overflow-x: scroll;
-      overflow-y: hidden;
     }
 
-    #timeline {
-      display: flex;
-      align-items: center;
-      position: relative;
-    }
-
-    .timeline-line {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background-color: #ddd;
-      transform: translateY(-50%);
-    }
-
-    .year {
-      position: relative;
-      flex: 0 0 auto;
-      width: 60px;
+    #year-display {
+      font-size: 2.5em;
+      color: #e74c3c;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px #fff;
       text-align: center;
-      margin: 0 10px;
-      cursor: pointer;
     }
 
-    .year-circle {
-      width: 20px;
-      height: 20px;
-      background-color: #6c5ce7;
+    #slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 15px;
+      border-radius: 5px;
+      background: #bdc3c7;
+      outline: none;
+      opacity: 0.7;
+      transition: opacity .2s;
+    }
+
+    #slider:hover {
+      opacity: 1;
+    }
+
+    #slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
-      margin: 0 auto 10px auto;
-      transition: background-color 0.3s;
+      background: #e67e22;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
 
-    .year:hover .year-circle {
-      background-color: #5a4bcf;
-    }
-
-    .year.selected .year-circle {
-      background-color: #ff7675;
-    }
-
-    .year-label {
-      font-size: 14px;
-      color: #333;
+    #slider::-moz-range-thumb {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #e67e22;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
 
     /* Stile per i dettagli */
@@ -124,33 +124,52 @@
       max-width: 800px;
       margin: 20px 20px 60px 20px;
       padding: 20px;
-      background-color: white;
+      background-color: rgba(255,255,255,0.9);
       border-radius: 10px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      text-align: center;
+      font-size: 1.2em;
+      line-height: 1.6;
     }
 
     #dettagli h2 {
       margin-bottom: 20px;
+      color: #e74c3c;
+      text-align: center;
+    }
+
+    #dettagli h3 {
       color: #333;
+      margin-top: 20px;
     }
 
     #dettagli p {
       color: #555;
-      line-height: 1.6;
     }
 
-    /* Stile per effetti di transizione */
-    .fade-in {
-      opacity: 0;
-      animation: fadeIn 0.5s forwards;
+    /* Effetto di pagina del quaderno */
+    .notebook {
+      background-color: rgba(255,255,255,0.8);
+      position: relative;
+      padding: 20px;
     }
 
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
+    .notebook:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50px;
+      width: 2px;
+      background: linear-gradient(to bottom, #bbb 50%, transparent 50%);
+      background-size: 2px 20px;
     }
+
+    .notebook h2, .notebook h3, .notebook p {
+      font-family: 'Caveat', cursive;
+    }
+
+    /* Importa font personalizzato */
+    @import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap');
   </style>
 </head>
 <body>
@@ -164,21 +183,22 @@
   </div>
 
   <!-- Sezione per la prefazione -->
-  <div id="prefazione"></div>
+  <div id="prefazione" class="notebook"></div>
 
-  <!-- Contenitore per la linea del tempo -->
+  <!-- Contenitore per la timeline slider -->
   <div id="timeline-container">
-    <div id="timeline">
-      <div class="timeline-line"></div>
-      <!-- Gli anni verranno inseriti dinamicamente qui -->
-    </div>
+    <div id="year-display"></div>
+    <input type="range" id="slider" min="0" max="0" value="0">
   </div>
 
   <!-- Sezione per mostrare i dettagli delle memorie -->
-  <div id="dettagli"></div>
+  <div id="dettagli" class="notebook"></div>
 
   <!-- JavaScript -->
   <script>
+    let dataGlobal;
+    let anniDisponibili = [];
+
     // Migliora il pulsante di caricamento del file
     const fileInput = document.getElementById('fileInput');
     const btn = document.querySelector('.file-input-wrapper .btn');
@@ -203,79 +223,65 @@
     });
 
     function inizializzaPagina(data) {
+      dataGlobal = data;
+
       // Imposta la prefazione
       const prefazioneDiv = document.getElementById('prefazione');
       prefazioneDiv.textContent = data.prefazione;
-      prefazioneDiv.classList.add('fade-in');
 
-      // Crea la linea del tempo
-      const timelineDiv = document.getElementById('timeline');
-      timelineDiv.innerHTML = ''; // Svuota il contenuto
-      const timelineLine = document.createElement('div');
-      timelineLine.className = 'timeline-line';
-      timelineDiv.appendChild(timelineLine);
-
+      // Configura lo slider
+      const annoNascita = data.annoNascita;
       const annoCorrente = new Date().getFullYear();
+      const slider = document.getElementById('slider');
+      slider.min = annoNascita;
+      slider.max = annoCorrente;
+      slider.value = annoNascita;
 
-      for (let anno = data.annoNascita; anno <= annoCorrente; anno++) {
-        const yearDiv = document.createElement('div');
-        yearDiv.className = 'year';
-        yearDiv.dataset.anno = anno;
-
-        const yearCircle = document.createElement('div');
-        yearCircle.className = 'year-circle';
-
-        const yearLabel = document.createElement('div');
-        yearLabel.className = 'year-label';
-        yearLabel.textContent = anno;
-
-        yearDiv.appendChild(yearCircle);
-        yearDiv.appendChild(yearLabel);
-
-        yearDiv.addEventListener('click', function() {
-          mostraDettagliAnno(anno, data.ricordi);
-          evidenziaAnnoSelezionato(this);
-        });
-        timelineDiv.appendChild(yearDiv);
+      // Crea un array degli anni disponibili
+      anniDisponibili = [];
+      for (let anno = annoNascita; anno <= annoCorrente; anno++) {
+        anniDisponibili.push(anno);
       }
 
-      // Rimuove eventuali dettagli precedenti
-      const dettagliDiv = document.getElementById('dettagli');
-      dettagliDiv.innerHTML = '';
+      // Mostra il primo anno
+      mostraDettagliAnno(annoNascita);
+
+      // Aggiungi event listener allo slider
+      slider.addEventListener('input', function() {
+        mostraDettagliAnno(this.value);
+      });
     }
 
-    function mostraDettagliAnno(anno, ricordi) {
+    function mostraDettagliAnno(anno) {
+      // Aggiorna la visualizzazione dell'anno
+      const yearDisplay = document.getElementById('year-display');
+      yearDisplay.textContent = 'Anno ' + anno;
+
       const dettagliDiv = document.getElementById('dettagli');
       dettagliDiv.innerHTML = ''; // Svuota il contenuto
 
-      const record = ricordi.find(r => r.anno === anno);
-      if (record) {
-        const titolo = document.createElement('h2');
-        titolo.textContent = 'Anno ' + anno;
-        const memorieP = document.createElement('p');
-        memorieP.textContent = record.memorie;
-        const riferimentoP = document.createElement('p');
-        riferimentoP.textContent = 'Riferimento storico: ' + record.riferimento;
-        dettagliDiv.appendChild(titolo);
-        dettagliDiv.appendChild(memorieP);
-        dettagliDiv.appendChild(riferimentoP);
+      const records = dataGlobal.ricordi.filter(r => r.anno == anno);
+
+      if (records.length > 0) {
+        records.forEach((record, index) => {
+          const titoloMemoria = document.createElement('h3');
+          titoloMemoria.textContent = 'Ricordo ' + (index + 1);
+
+          const memorieP = document.createElement('p');
+          memorieP.textContent = record.memorie;
+
+          const riferimentoP = document.createElement('p');
+          riferimentoP.innerHTML = '<strong>Riferimento storico:</strong> ' + record.riferimento;
+
+          dettagliDiv.appendChild(titoloMemoria);
+          dettagliDiv.appendChild(memorieP);
+          dettagliDiv.appendChild(riferimentoP);
+        });
       } else {
-        const titolo = document.createElement('h2');
-        titolo.textContent = 'Anno ' + anno;
         const nessunDatoP = document.createElement('p');
         nessunDatoP.textContent = 'Nessun ricordo disponibile per questo anno.';
-        dettagliDiv.appendChild(titolo);
         dettagliDiv.appendChild(nessunDatoP);
       }
-      dettagliDiv.classList.add('fade-in');
-    }
-
-    function evidenziaAnnoSelezionato(elementoSelezionato) {
-      const anni = document.querySelectorAll('.year');
-      anni.forEach(function(anno) {
-        anno.classList.remove('selected');
-      });
-      elementoSelezionato.classList.add('selected');
     }
   </script>
 </body>
