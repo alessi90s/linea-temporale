@@ -192,6 +192,29 @@
       background-color: #2980b9;
     }
 
+    /* Stile per l'indice degli anni */
+    #year-index {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 20px;
+      max-width: 800px;
+    }
+
+    .year-item {
+      background-color: #95a5a6;
+      color: #fff;
+      padding: 8px 16px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: default;
+      user-select: none;
+    }
+
+    .year-item:hover {
+      background-color: #7f8c8d;
+    }
+
     /* Stile per testo evidenziato */
     .highlight {
       background-color: yellow;
@@ -209,12 +232,15 @@
 
   <!-- Pulsante per caricare il file JSON con tooltip -->
   <div class="file-input-wrapper">
-    <button class="btn" data-tooltip="Per creare il file JSON:\n\n{\n  \"prefazione\": \"Testo\",\n  \"annoNascita\": 1990,\n  \"ricordi\": [\n    {\n      \"anno\": 2000,\n      \"memorie\": \"Testo\",\n      \"categorie\": [\"Categoria1\", \"Categoria2\"]\n    }\n  ]\n}">Carica il Tuo Diario</button>
+    <button class="btn" data-tooltip="Per creare il file JSON:\n\n{\n  \"prefazione\": \"Testo\",\n  \"annoNascita\": 1990,\n  \"anni\": [\n    {\n      \"anno\": 2000,\n      \"particolarita\": \"Evento\",\n      \"ricordi\": [\n        {\n          \"memorie\": \"Testo\",\n          \"categorie\": [\"Categoria1\", \"Categoria2\"]\n        }\n      ]\n    }\n  ]\n}">Carica il Tuo Diario</button>
     <input type="file" id="fileInput" accept=".json">
   </div>
 
   <!-- Contenitore principale nascosto inizialmente -->
   <div class="container">
+    <!-- Indice degli anni -->
+    <div id="year-index"></div>
+
     <!-- Elenco delle categorie -->
     <div id="categories"></div>
 
@@ -276,15 +302,17 @@
       prefazioneDiv.innerHTML = parseText(data.prefazione);
 
       // Configura lo slider
+      const anni = data.anni.map(annoObj => annoObj.anno);
       const annoNascita = data.annoNascita;
-      const annoCorrente = new Date().getFullYear();
+      const annoInizio = Math.min(...anni);
+      const annoFine = Math.max(...anni);
       const slider = document.getElementById('slider');
-      slider.min = annoNascita;
-      slider.max = annoCorrente;
-      slider.value = annoNascita;
+      slider.min = annoInizio;
+      slider.max = annoFine;
+      slider.value = annoInizio;
 
       // Mostra il primo anno
-      mostraDettagliAnno(annoNascita);
+      mostraDettagliAnno(annoInizio);
 
       // Aggiungi event listener allo slider
       slider.addEventListener('input', function() {
@@ -296,7 +324,10 @@
       });
 
       // Crea l'elenco delle categorie
-      creaElencoCategorie(data.ricordi);
+      creaElencoCategorie(data.anni);
+
+      // Crea l'indice degli anni
+      creaIndiceAnni(data.anni);
     }
 
     function mostraDettagliAnno(anno) {
@@ -312,10 +343,17 @@
       const dettagliDiv = document.querySelector('#dettagli .lined-paper-content');
       dettagliDiv.innerHTML = ''; // Svuota il contenuto
 
-      const records = dataGlobal.ricordi.filter(r => r.anno == anno);
+      const annoData = dataGlobal.anni.find(a => a.anno == anno);
 
-      if (records.length > 0) {
-        records.forEach((record, index) => {
+      if (annoData) {
+        // Mostra la particolarità dell'anno
+        if (annoData.particolarita) {
+          const particolaritaH3 = document.createElement('h3');
+          particolaritaH3.textContent = 'Particolarità: ' + annoData.particolarita;
+          dettagliDiv.appendChild(particolaritaH3);
+        }
+
+        annoData.ricordi.forEach((record, index) => {
           const titoloMemoria = document.createElement('h3');
           titoloMemoria.textContent = 'Ricordo ' + (index + 1);
 
@@ -339,7 +377,9 @@
     function calcolaEta(anno) {
       const annoNascita = dataGlobal.annoNascita;
       const eta = anno - annoNascita;
-      if (eta === 0) {
+      if (eta < 0) {
+        return 'Non nato';
+      } else if (eta === 0) {
         return 'qualche mese di vita';
       } else if (eta === 1) {
         return '1 anno';
@@ -348,11 +388,13 @@
       }
     }
 
-    function creaElencoCategorie(ricordi) {
+    function creaElencoCategorie(anni) {
       const categorieSet = new Set();
-      ricordi.forEach(ricordo => {
-        ricordo.categorie.forEach(categoria => {
-          categorieSet.add(categoria);
+      anni.forEach(annoObj => {
+        annoObj.ricordi.forEach(ricordo => {
+          ricordo.categorie.forEach(categoria => {
+            categorieSet.add(categoria);
+          });
         });
       });
 
@@ -372,6 +414,16 @@
       });
     }
 
+    function creaIndiceAnni(anni) {
+      const yearIndexDiv = document.getElementById('year-index');
+      anni.forEach(annoObj => {
+        const yearItem = document.createElement('div');
+        yearItem.className = 'year-item';
+        yearItem.innerHTML = '<strong>' + annoObj.anno + ':</strong> ' + annoObj.particolarita;
+        yearIndexDiv.appendChild(yearItem);
+      });
+    }
+
     function selezionaCategoria(categoria, elemento) {
       categoriaSelezionata = categoria;
 
@@ -382,10 +434,20 @@
       const dettagliDiv = document.querySelector('#dettagli .lined-paper-content');
       dettagliDiv.innerHTML = ''; // Svuota il contenuto
 
-      const records = dataGlobal.ricordi.filter(r => r.categorie.includes(categoria));
+      const records = [];
+      dataGlobal.anni.forEach(annoObj => {
+        annoObj.ricordi.forEach(ricordo => {
+          if (ricordo.categorie.includes(categoria)) {
+            records.push({
+              anno: annoObj.anno,
+              memorie: ricordo.memorie
+            });
+          }
+        });
+      });
 
       if (records.length > 0) {
-        records.forEach((record, index) => {
+        records.forEach(record => {
           const titoloMemoria = document.createElement('h3');
           titoloMemoria.textContent = 'Anno ' + record.anno;
 
