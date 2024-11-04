@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Linea del Tempo Interattiva</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    #prefazione {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+
+    #timeline {
+      margin-top: 30px;
+    }
+
+    .year {
+      display: inline-block;
+      margin: 5px;
+      padding: 10px;
+      background-color: #e0e0e0;
+      cursor: pointer;
+    }
+
+    .year:hover {
+      background-color: #c0c0c0;
+    }
+
+    .selected {
+      background-color: #a0a0a0;
+    }
+
+    #dettagli {
+      margin-top: 30px;
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Linea del Tempo Interattiva</h1>
+
+  <!-- Input per caricare il file JSON -->
+  <input type="file" id="fileInput" accept=".json">
+
+  <!-- Sezione per la prefazione -->
+  <div id="prefazione"></div>
+
+  <!-- Sezione per la linea del tempo -->
+  <div id="timeline"></div>
+
+  <!-- Sezione per mostrare i dettagli delle memorie -->
+  <div id="dettagli"></div>
+
+  <!-- JavaScript -->
+  <script>
+    // Gestisce il caricamento del file JSON
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const content = e.target.result;
+          try {
+            const data = JSON.parse(content);
+            inizializzaPagina(data);
+          } catch (err) {
+            alert('Errore nel parsing del file JSON.');
+          }
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    function inizializzaPagina(data) {
+      // Imposta la prefazione
+      document.getElementById('prefazione').textContent = data.prefazione;
+
+      // Crea la linea del tempo
+      const timelineDiv = document.getElementById('timeline');
+      timelineDiv.innerHTML = ''; // Svuota il contenuto
+      const annoCorrente = new Date().getFullYear();
+
+      for (let anno = data.annoNascita; anno <= annoCorrente; anno++) {
+        const yearDiv = document.createElement('div');
+        yearDiv.className = 'year';
+        yearDiv.textContent = anno;
+        yearDiv.dataset.anno = anno;
+        yearDiv.addEventListener('click', function() {
+          mostraDettagliAnno(anno, data.ricordi);
+          evidenziaAnnoSelezionato(this);
+        });
+        timelineDiv.appendChild(yearDiv);
+      }
+    }
+
+    function mostraDettagliAnno(anno, ricordi) {
+      const dettagliDiv = document.getElementById('dettagli');
+      dettagliDiv.innerHTML = ''; // Svuota il contenuto
+
+      const record = ricordi.find(r => r.anno === anno);
+      if (record) {
+        const memorieP = document.createElement('p');
+        memorieP.textContent = 'Memorie: ' + record.memorie;
+        const riferimentoP = document.createElement('p');
+        riferimentoP.textContent = 'Riferimento: ' + record.riferimento;
+        dettagliDiv.appendChild(memorieP);
+        dettagliDiv.appendChild(riferimentoP);
+      } else {
+        dettagliDiv.textContent = 'Nessun dato disponibile per questo anno.';
+      }
+    }
+
+    function evidenziaAnnoSelezionato(elementoSelezionato) {
+      const anni = document.querySelectorAll('.year');
+      anni.forEach(function(anno) {
+        anno.classList.remove('selected');
+      });
+      elementoSelezionato.classList.add('selected');
+    }
+  </script>
+</body>
+</html>
