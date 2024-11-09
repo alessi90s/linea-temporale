@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Il Mio Diario Interattivo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Aggiunto per il design responsive -->
+  <style>
+    /* Stili generali */
+    body {
+      font-family: 'Times New Roman', serif;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      /* Sfondo a griglia più chiaro */
+      background-image: linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px), 
+                        linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px);
+      background-size: 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Contenitore principale centrato */
+    .main-container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 15px; /* Aggiunto padding laterale per dispositivi mobili */
+    }
+
+    /* Titolo principale */
+    h1 {
+      margin-top: 50px;
+      font-size: 2.5em;
+      color: #333;
+      text-align: center;
+    }
+
+    /* Sottotitolo */
+    h2 {
+      font-size: 1.2em;
+      color: #666;
+      font-style: italic;
+      margin-top: -10px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    /* Nascondi il titolo e il sottotitolo dopo il caricamento */
+    .header {
+      text-align: center;
+    }
+
+    .header.hidden {
+      display: none;
+    }
+
+    /* Stile per il pulsante di caricamento del file */
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      margin-top: 20px;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: #2c3e50;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      text-decoration: none;
+      border: none;
+      position: relative;
+    }
+
+    .btn:hover {
+      background-color: #34495e;
+    }
+
+    /* Tooltip per le istruzioni */
+    .btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      width: 250px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .btn:hover::after {
+      opacity: 1;
+    }
+
+    /* Nascondi il contenitore principale prima del caricamento */
+    .container {
+      display: none;
+    }
+
+    /* Stile per la prefazione */
+    #prefazione {
+      background-color: #f9f9f9;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
+    }
+
+    /* Stile per lo slider della timeline */
+    #timeline-container {
+      width: 100%;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    #year-display {
+      font-size: 2em;
+      color: #2c3e50;
+      margin-bottom: 5px;
+      word-wrap: break-word; /* Per gestire testi lunghi su dispositivi mobili */
+    }
+
+    #age-display {
+      font-size: 1.2em;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    #slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      background: #7f8c8d;
+      outline: none;
+    }
+
+    #slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #2c3e50;
+      cursor: pointer;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    }
+
+    #slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #2c3e50;
+      cursor: pointer;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    }
+
+    /* Stile per le categorie */
+    #categories {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 10px 0;
+      width: 100%;
+    }
+
+    .category {
+      background-color: #9b59b6;
+      color: #fff;
+      padding: 6px 12px;
+      margin: 5px;
+      border-radius: 20px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.9em;
+    }
+
+    .category.selected {
+      background-color: #8e44ad;
+    }
+
+    .category:hover {
+      background-color: #7d3c98;
+    }
+
+    /* Stile per la sezione dei ricordi */
+    #dettagli {
+      background-color: #f9f9f9;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
+    }
+
+    /* Media queries per dispositivi mobili */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+        margin-top: 30px;
+      }
+
+      h2 {
+        font-size: 1em;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+
+      #year-display {
+        font-size: 1.5em;
+      }
+
+      #age-display {
+        font-size: 1em;
+      }
+
+      .category {
+        padding: 5px 10px;
+        font-size: 0.8em;
+      }
+
+      .btn::after {
+        width: 200px;
+        font-size: 12px;
+      }
+
+      #prefazione, #dettagli {
+        padding: 15px;
+      }
+
+      #prefazione, #dettagli, #timeline-container {
+        margin: 15px 0;
+      }
+    }
+
+    /* Stile per testo evidenziato */
+    .highlight {
+      background-color: yellow;
+    }
+
+    /* Stile per testo sottolineato */
+    .underline {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Contenitore principale -->
+  <div class="main-container">
+
+    <!-- Titolo principale e sottotitolo -->
+    <div class="header">
+      <h1>Il Mio Diario Interattivo</h1>
+      <h2>Carica il tuo diario in formato JSON per iniziare</h2>
+    </div>
+
+    <!-- Pulsante per caricare il file JSON con tooltip -->
+    <div class="file-input-wrapper">
+      <button class="btn" data-tooltip="Il file JSON deve avere la struttura:\n{\n  \"prefazione\": \"Testo\",\n  \"annoNascita\": 1990,\n  \"anni\": [...],\n  \"ricordi\": [...]\n}">Carica il Tuo Diario</button>
+      <input type="file" id="fileInput" accept=".json">
+    </div>
+
+    <!-- Contenitore principale nascosto inizialmente -->
+    <div class="container">
+
+      <!-- Prefazione -->
+      <div id="prefazione"></div>
+
+      <!-- Contenitore per la timeline slider -->
+      <div id="timeline-container">
+        <div id="year-display"></div>
+        <div id="age-display"></div>
+        <input type="range" id="slider" min="0" max="0" value="0">
+      </div>
+
+      <!-- Elenco delle categorie -->
+      <div id="categories"></div>
+
+      <!-- Sezione per mostrare i dettagli delle memorie -->
+      <div id="dettagli">
+        <div id="dettagli-content"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    let dataGlobal;
+    let categoriaSelezionata = null;
+    let indiceAnni = {};
+
+    // Migliora il pulsante di caricamento del file
+    const fileInput = document.getElementById('fileInput');
+    const btn = document.querySelector('.file-input-wrapper .btn');
+    btn.addEventListener('click', () => fileInput.click());
+
+    // Gestisce il caricamento del file JSON
+    fileInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const content = e.target.result;
+          try {
+            const data = JSON.parse(content);
+            inizializzaPagina(data);
+            // Nascondi il pulsante e il titolo dopo il caricamento
+            document.querySelector('.file-input-wrapper').style.display = 'none';
+            document.querySelector('.header').classList.add('hidden');
+            // Mostra il contenuto
+            document.querySelector('.container').style.display = 'block';
+          } catch (err) {
+            alert('Errore nel parsing del file JSON.');
+          }
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    function inizializzaPagina(data) {
+      dataGlobal = data;
+
+      // Imposta la prefazione in alto
+      const prefazioneDiv = document.getElementById('prefazione');
+      prefazioneDiv.innerHTML = parseText(data.prefazione);
+
+      // Crea l'indice degli anni
+      creaIndiceAnni(data.anni);
+
+      // Configura lo slider
+      const annoNascita = data.annoNascita;
+      const annoCorrente = new Date().getFullYear();
+      const slider = document.getElementById('slider');
+      slider.min = annoNascita;
+      slider.max = annoCorrente;
+      slider.value = annoNascita;
+
+      // Mostra il primo anno
+      mostraDettagliAnno(annoNascita);
+
+      // Aggiungi event listener allo slider
+      slider.addEventListener('input', function() {
+        if (categoriaSelezionata) {
+          // Deseleziona la categoria se si interagisce con la timeline
+          deselezionaCategoria();
+        }
+        mostraDettagliAnno(this.value);
+      });
+
+      // Crea l'elenco delle categorie
+      creaElencoCategorie(data.ricordi);
+    }
+
+    function creaIndiceAnni(anni) {
+      anni.forEach(annoObj => {
+        indiceAnni[annoObj.anno] = annoObj.particolarita;
+      });
+    }
+
+    function mostraDettagliAnno(anno) {
+      // Aggiorna la visualizzazione dell'anno
+      const yearDisplay = document.getElementById('year-display');
+      // Mostra la particolarità dell'anno accanto all'anno nella linea temporale
+      const particolarita = indiceAnni[anno] ? ' - ' + parseText(indiceAnni[anno]) : '';
+      yearDisplay.innerHTML = 'Anno ' + anno + particolarita;
+
+      // Calcola l'età
+      const eta = calcolaEta(anno);
+      const ageDisplay = document.getElementById('age-display');
+      ageDisplay.textContent = 'Età: ' + eta;
+
+      const dettagliDiv = document.getElementById('dettagli-content');
+      dettagliDiv.innerHTML = ''; // Svuota il contenuto
+
+      const records = dataGlobal.ricordi.filter(r => r.anno == anno);
+
+      if (records.length > 0) {
+        records.forEach((record, index) => {
+          const titoloMemoria = document.createElement('h3');
+          titoloMemoria.textContent = 'Ricordo ' + (index + 1);
+
+          const memorieP = document.createElement('p');
+          memorieP.innerHTML = parseText(record.memorie);
+
+          const categorieP = document.createElement('p');
+          categorieP.innerHTML = '<strong>Categorie:</strong> ' + record.categorie.join(', ');
+
+          dettagliDiv.appendChild(titoloMemoria);
+          dettagliDiv.appendChild(memorieP);
+          dettagliDiv.appendChild(categorieP);
+        });
+      } else {
+        const nessunDatoP = document.createElement('p');
+        nessunDatoP.textContent = 'Nessun ricordo disponibile per questo anno.';
+        dettagliDiv.appendChild(nessunDatoP);
+      }
+    }
+
+    function calcolaEta(anno) {
+      const annoNascita = dataGlobal.annoNascita;
+      const eta = anno - annoNascita;
+      if (eta === 0) {
+        return 'qualche mese di vita';
+      } else if (eta === 1) {
+        return '1 anno';
+      } else {
+        return eta + ' anni';
+      }
+    }
+
+    function creaElencoCategorie(ricordi) {
+      const categorieSet = new Set();
+      ricordi.forEach(ricordo => {
+        ricordo.categorie.forEach(categoria => {
+          categorieSet.add(categoria);
+        });
+      });
+
+      const categorieDiv = document.getElementById('categories');
+      categorieSet.forEach(categoria => {
+        const categoriaSpan = document.createElement('span');
+        categoriaSpan.className = 'category';
+        categoriaSpan.textContent = categoria;
+        categoriaSpan.addEventListener('click', function() {
+          if (categoriaSelezionata === categoria) {
+            deselezionaCategoria();
+          } else {
+            selezionaCategoria(categoria, categoriaSpan);
+          }
+        });
+        categorieDiv.appendChild(categoriaSpan);
+      });
+    }
+
+    function selezionaCategoria(categoria, elemento) {
+      categoriaSelezionata = categoria;
+
+      // Evidenzia la categoria selezionata
+      document.querySelectorAll('.category').forEach(el => el.classList.remove('selected'));
+      elemento.classList.add('selected');
+
+      const dettagliDiv = document.getElementById('dettagli-content');
+      dettagliDiv.innerHTML = ''; // Svuota il contenuto
+
+      const records = dataGlobal.ricordi.filter(r => r.categorie.includes(categoria));
+
+      if (records.length > 0) {
+        records.forEach((record, index) => {
+          const titoloMemoria = document.createElement('h3');
+          titoloMemoria.textContent = 'Anno ' + record.anno;
+
+          const memorieP = document.createElement('p');
+          memorieP.innerHTML = parseText(record.memorie);
+
+          dettagliDiv.appendChild(titoloMemoria);
+          dettagliDiv.appendChild(memorieP);
+        });
+      } else {
+        const nessunDatoP = document.createElement('p');
+        nessunDatoP.textContent = 'Nessun ricordo disponibile per questa categoria.';
+        dettagliDiv.appendChild(nessunDatoP);
+      }
+    }
+
+    function deselezionaCategoria() {
+      categoriaSelezionata = null;
+      document.querySelectorAll('.category').forEach(el => el.classList.remove('selected'));
+      // Aggiorna la visualizzazione per l'anno corrente
+      const slider = document.getElementById('slider');
+      mostraDettagliAnno(slider.value);
+    }
+
+    // Funzione per interpretare il testo con formattazione personalizzata
+    function parseText(text) {
+      // Sostituisce [u]testo[/u] con testo sottolineato
+      text = text.replace(/\[u\](.*?)\[\/u\]/g, '<span class="underline">$1</span>');
+      // Sostituisce [h]testo[/h] con testo evidenziato
+      text = text.replace(/\[h\](.*?)\[\/h\]/g, '<span class="highlight">$1</span>');
+      return text;
+    }
+  </script>
+</body>
+</html>
