@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Il Mio Diario Interattivo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Aggiunto per il design responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Importante per il design responsive -->
   <style>
     /* Stili generali */
     body {
@@ -27,7 +27,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0 15px; /* Aggiunto padding laterale per dispositivi mobili */
+      padding: 0 15px; /* Padding laterale per dispositivi mobili */
+      box-sizing: border-box; /* Importante per calcolare correttamente la larghezza */
     }
 
     /* Titolo principale */
@@ -128,6 +129,7 @@
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       width: 100%;
+      box-sizing: border-box;
     }
 
     /* Stile per lo slider della timeline */
@@ -135,6 +137,7 @@
       width: 100%;
       margin: 20px 0;
       text-align: center;
+      box-sizing: border-box;
     }
 
     #year-display {
@@ -157,6 +160,7 @@
       border-radius: 5px;
       background: #7f8c8d;
       outline: none;
+      margin: 0; /* Rimuove margini indesiderati */
     }
 
     #slider::-webkit-slider-thumb {
@@ -215,12 +219,13 @@
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       width: 100%;
+      box-sizing: border-box;
     }
 
     /* Media queries per dispositivi mobili */
     @media (max-width: 600px) {
       h1 {
-        font-size: 2em;
+        font-size: 1.8em;
         margin-top: 30px;
       }
 
@@ -234,7 +239,7 @@
       }
 
       #year-display {
-        font-size: 1.5em;
+        font-size: 1.4em;
       }
 
       #age-display {
@@ -257,6 +262,11 @@
 
       #prefazione, #dettagli, #timeline-container {
         margin: 15px 0;
+      }
+
+      /* Regola per evitare che lo slider esca fuori dallo schermo */
+      #slider {
+        width: 100%;
       }
     }
 
